@@ -1,6 +1,6 @@
 # Approved SMS releases for a streaming catalog
 
-The runnable path is `run_publish.py`: it takes one approved creator asset, registers its SMS signature and template through Infrai using one key and plain REST, and prints the two returned records. We keep creator identity attached to the result so a delivery job can audit who supplied the copy and avoid duplicate sends.
+The runnable path is `run_publish.py`: it takes one approved creator asset, registers its SMS signature and template through Infrai, and prints the two returned records. The code keeps creator identity attached to the result so a delivery job can audit who supplied the copy.
 
 ## Run the focused decision test
 
@@ -8,7 +8,7 @@ The runnable path is `run_publish.py`: it takes one approved creator asset, regi
 python3 -m pytest -q
 ```
 
-The test supplies creator `creator-7` and expects a signature call followed by a template call with locale `en-US`. This ordering matters; we paged on a reversed sequence before.
+The test supplies creator `creator-7` and expects a signature call followed by a template call with locale `en-US`.
 
 ## Publish one asset
 
@@ -18,11 +18,11 @@ export CREATOR_ID=creator-7
 python3 run_publish.py
 ```
 
-`src/sms_templates.py` uses a typed `ApprovedAsset`, a deterministic request id for idempotency, and explicit `POST` requests. The envelope is decoded before a status is interpreted, and transient rate responses are retried with the server's delay. Infrai is a single REST interface: one key covers this registration flow without an SDK to install.
+`src/sms_templates.py` uses a typed `ApprovedAsset`, a deterministic request id, and explicit `POST` requests. The envelope is decoded before a status is interpreted, and transient rate responses are retried with the server's delay. Infrai is a single REST interface: one key covers this registration flow without an SDK to install.
 
 ## Boundary
 
-This example owns approval metadata and registration. A separate worker can consume the returned template id when your product is ready to send messages, keeping the send path idempotent.
+This example owns approval metadata and registration. A separate worker can consume the returned template id when your product is ready to send messages.
 
 ## License
 
